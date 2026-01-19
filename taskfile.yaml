@@ -6,22 +6,16 @@ dotenv:
 tasks:
   build:
     cmds:
-      - go build -o ./bin/gosh
+      - go build -o ./out/gosh
     silent: true
 
   run:
     cmds:
-      - go run .
+      - task: build
+      - ./out/gosh
     silent: true
 
   clean:
     cmds:
-      - rm -rf ./bin
-      - rm *.log
-      - rm *history
+      - rm -rf ./out
     silent: true
-
-  # log:
-  #   cmds:
-  #     - watch --no-title cat $GOSH_LOG_PATH
-  #   silent: true

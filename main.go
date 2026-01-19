@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"path/filepath"
 	"slices"
 	"strings"
 
@@ -19,8 +20,15 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
+	configDir, ok := os.LookupEnv("GOSH_CONFIG_DIR")
+	if !ok {
+		panic("GOSH_CONFIG_DIR not set")
+	}
+
+	historyFile := filepath.Join(configDir, "history")
+
 	rl, err := readline.NewEx(&readline.Config{
-		HistoryFile: "~/dev/gosh/history",
+		HistoryFile: historyFile,
 	})
 	if err != nil {
 		panic(err)
