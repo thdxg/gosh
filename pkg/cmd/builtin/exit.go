@@ -1,5 +1,9 @@
 package builtin
 
-func Exit() error {
-	return nil
+import (
+	"context"
+)
+
+func Exit(ctx context.Context, arg []string) error {
+	return ErrExit
 }

@@ -8,7 +8,7 @@ type Registry struct {
 
 var (
 	PrePrompt  Registry
-	PostPrompt Registry
+	PostCommand Registry
 )
 
 func (r *Registry) Register(h Hook) {

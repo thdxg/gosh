@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"context"
-	"io"
+	"gosh/pkg/cmd/builtin"
 	"os"
 	"os/exec"
 )
@@ -14,31 +14,20 @@ func Exec(ctx context.Context, args []string) error {
 
 	name, arg := args[0], args[1:]
 
-	cmd := exec.CommandContext(ctx, name, arg...)
-
-	op, err := cmd.StdoutPipe()
+	matched, err := builtin.Handle(ctx, name, arg)
 	if err != nil {
 		return err
 	}
-	defer op.Close()
-
-	ep, err := cmd.StderrPipe()
-	if err != nil {
-		return err
+	if matched {
+		return nil
 	}
-	defer ep.Close()
+
+	// run independently from the parent context
+	cmd := exec.CommandContext(context.Background(), name, arg...)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
 
 	if err := cmd.Start(); err != nil {
-		return err
-	}
-
-	_, err = io.Copy(os.Stdout, op)
-	if err != nil {
-		return err
-	}
-
-	_, err = io.Copy(os.Stderr, ep)
-	if err != nil {
 		return err
 	}
 
